@@ -1,0 +1,51 @@
+<html>
+<style>
+ul {
+    columns: 3;
+    -webkit-columns: 3;
+    -moz-columns: 3;
+}
+</style>
+<body></body>
+    {% block content %}
+
+
+    <div class="container">
+            <div>
+                <form method="POST" action="{{ url_for('process_form') }}">
+                    <label for="list1">Like:</label><br>
+                    <textarea id="list1" name="list1" rows="5" cols="40"></textarea><br>
+                    <label for="list2">Dislike:</label><br>
+                    <textarea id="list2" name="list2" rows="5" cols="40"></textarea><br>
+                    <input type="submit" value="Submit">
+                </form>
+            </div>
+            <p>Recoms</p>
+            <ul>
+                {% for recom in state.recoms %}
+                    <li>
+                        <div>
+                            <a href="{{recom[2]}}">link</a>
+                            <img src="{{recom[1]}}" width="224" height="224">
+                        </div>
+                    </li>
+                {% endfor %}
+            </ul>
+            <p>Suggestions</p>
+            <ul>
+                {% for suggestion in state.suggestions %}
+                    <li>
+                        <div>
+                            <p>{{loop.index}}</p>
+                            <a href="{{suggestion[2]}}">link</a>
+                            <img src="{{suggestion[1]}}" width="224" height="224">
+                        </div>
+                    </li>
+                {% endfor %}
+            </ul>
+    </div>
+    {% endblock %}
+</body>
+</html>
+
+
