@@ -9,6 +9,8 @@ from numpy.linalg import norm
 import base64
 from flask import jsonify
 import json
+from flask import Response
+
 data = []
 with open('new_data.pkl', 'rb') as f:
     data = pickle.load(f)
@@ -31,10 +33,8 @@ for user in users:
         vectors.append(row[4])
     average = np.mean(vectors, axis=0)
     averages[user] = average
-    
-example = ''
-with open('example.json') as file:
-    example = json.loads(file.read())
+
+fake_db = {}  
 
 def cos(a, b):
     return dot(a, b)/(norm(a)*norm(b))
@@ -148,6 +148,26 @@ def get_recomendations():
     response = { 'state': state_str, 'pins': pins }
     print(f'Current state_str: {response["state"][0:10]}')
     return response
+
+@app.route('/get_profiles', methods=['GET'])
+def get_profiles_get():
+    email = request.args.get('username')
+    if email in fake_db:
+        return Response(json.dumps(fake_db[email]),  mimetype='application/json')
+    return Response(json.dumps([]),  mimetype='application/json')
+
+@app.route('/get_profiles', methods=['PUT'])
+def get_profiles_put():
+    content = request.get_json(force=True)
+    email = content['email']
+    if not email in fake_db:
+        fake_db[email] = []
+    fake_db[email].append({'email': content['email'], 'name': content['name'], 'state': content['state']})
+    return Response(json.dumps(fake_db[email]),  mimetype='application/json')
+
+@app.route('/fake_db', methods=['GET'])
+def get_db():
+    return Response(json.dumps(fake_db),  mimetype='application/json')
 
 if __name__ == '__main__':
     app.run(port=8080)
